@@ -1,4 +1,4 @@
-# Primeiramente esse Script foi traduzido por mim e eu revidei o codigo.
+# Primeiramente esse Script foi traduzido por mim e eu revisei o codigo.
 
 O desenvolvedor oficial deste Script e o https://github.com/BeepIsla/, todo credito
 e dele, eu apenas fiz algumas alteracoes na traducao e adicionei algumas funcionalidades que eu achei necessaria. 
