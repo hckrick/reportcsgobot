@@ -20,7 +20,7 @@ const steamUser = new SteamUser();
 let csgoUser = undefined;
 
 process.on("unhandledRejection", (reason, promise) => {
-	console.error("A request failed to run. Github, Steam or CSGO might currently be offline. Logging out...");
+	console.error("Falha ao conectar, Steam ou o CSGO Cordenador de partidas podem estar Offiline");
 
 	// The process should exit automatically once Steam has successfully logged off
 	steamUser.logOff();
@@ -70,21 +70,37 @@ if (config.account.sharedSecret && config.account.sharedSecret.length > 5) {
 steamUser.logOn(logonSettings);
 
 steamUser.on("loggedOn", async () => {
-	console.log("Successfully logged into " + steamUser.steamID.toString());
+	console.log("Entrou com sucesso " + steamUser.steamID.toString());
 	steamUser.setPersona(SteamUser.EPersonaState.Online);
 
-	console.log("Checking protobufs...");
+	console.log("Consultando...");
 	let foundProtobufs = Helper.verifyProtobufs();
 	if (foundProtobufs) {
-		console.log("Found protobufs");
+		console.log("Encontrado");
 	} else {
-		console.log("Failed to find protobufs, downloading and extracting...");
+		console.log("Falha na verificacao ...");
 		await Helper.downloadProtobufs(__dirname);
 	}
 
 	csgoUser = new GameCoordinator(steamUser);
+  console.log(" ******************************************************** ");
+	console.log("TRADUZIDO POR iD3");
+  console.log(" ********************************************************** ");
+  console.log("  ");
+  console.log("  ");
+	console.log(" (҂`_´) ");
+	console.log("<,︻╦╤─ ҉ - -");
+	console.log(" /﹋\ ");
 
-	console.log("Checking for updates...");
+	console.log("  ");
+	console.log("  ");
+	console.log("  ");
+	console.log(" ");
+	console.log(" ");
+	console.log("Verificando atualizacoes...");
+	console.log(" ******************************************************** ");
+
+
 
 	try {
 		let package = JSON.parse(fs.readFileSync("./package.json"));
@@ -93,16 +109,16 @@ steamUser.on("loggedOn", async () => {
 		if (package.version !== res) {
 			let repoURL = package.repository.url.split(".");
 			repoURL.pop();
-			console.log("A new version is available on Github @ " + repoURL.join("."));
-			console.log("Downloading is optional but recommended. Make sure to check if there are any new values to be added in your old \"config.json\"");
+			console.log("Nova versao disponivel @ " + repoURL.join("."));
+			console.log("Faca o download e reconfigure suas credenciais \"config.json\"");
 		} else {
-			console.log("Up to date!");
+			console.log("Atualizado");
 		}
 	} catch (e) {
-		console.log("Failed to check for updates");
+		console.log("Falha ao checar atualizacoes");
 	}
 
-	console.log("Establishing CSGO GameCoordinator connection...");
+	console.log("Iniciando conexao com a rede do CSGO...");
 	steamUser.gamesPlayed([730]);
 	await csgoUser.start();
 
@@ -139,14 +155,14 @@ steamUser.on("loggedOn", async () => {
 		rank = rank.rankings[0];
 	}
 
-	console.log("We are " + lang.Tokens["skillgroup_" + rank.rank_id] + " with " + rank.wins + " win" + (rank.wins === 1 ? "" : "s"));
+	console.log("Seu G.H = " + lang.Tokens["skillgroup_" + rank.rank_id] + " esta com " + rank.wins + " vitoria" + (rank.wins === 1 ? "" : "s"));
 	if (rank.rank_id < 7 || rank.wins < 150) {
-		console.log((rank.rank_id < 7 ? "Our rank is too low" : "We do not have enough wins") + " in order to request Overwatch cases. You need at least 150 wins and " + lang.Tokens["skillgroup_7"] + ".");
+		console.log((rank.rank_id < 7 ? "Sua patente e baixa" : "Ou voce nao tem vitorias suficientes") + "Voce precisa ser Ouro 1 e ter mais de 150 Vitorias no modo competitivo " + lang.Tokens["skillgroup_7"] + ".");
 		steamUser.logOff();
 		return;
 	}
 
-	console.log("We are likely able to request Overwatch cases. Trying to start case handler...");
+	console.log("Verificando se ha casos de Fiscalizacao disponiveis para analise.");
 
 	doOverwatchCase();
 });
@@ -164,7 +180,7 @@ async function doOverwatchCase() {
 	}
 
 	data.total.startTimestamp = Date.now();
-	console.log("-".repeat(20) + "\nRequested Overwatch case");
+	console.log("-".repeat(20) + "\nCaso de Fiscalizacao solicitado");
 	let caseUpdate = await csgoUser.sendMessage(
 		730,
 		csgoUser.Protos.csgo.ECsgoGCMsg.k_EMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate,
@@ -184,11 +200,12 @@ async function doOverwatchCase() {
 
 		// Download demo
 		if (fs.existsSync("./demofile.dem")) fs.unlinkSync("./demofile.dem");
-		console.log("Downloading case " + caseUpdate.caseid + " from url " + caseUpdate.caseurl);
+		console.log("Baixando partidas " + caseUpdate.caseid + " do servidor " + caseUpdate.caseurl);
+		console.log(" ******************************************************** ");
 
 		let sid = SteamID.fromIndividualAccountID(caseUpdate.suspectid);
 		if (!sid.isValid()) {
-			console.log("Got invalid suspect ID " + caseUpdate.suspectid);
+			console.log("Adiquirindo a ID do suspeito " + caseUpdate.suspectid);
 			doOverwatchCase();
 			return;
 		}
@@ -200,7 +217,8 @@ async function doOverwatchCase() {
 				data.download.endTimestamp = Date.now();
 
 				// Successfully downloaded, tell the GC about it!
-				console.log("Finished downloading " + caseUpdate.caseid + ", unpacking...");
+				console.log("Terminamos o download " + caseUpdate.caseid + ", extraindo...");
+				console.log(" ******************************************************** ");
 
 				await csgoUser.sendMessage(
 					730,
@@ -226,8 +244,8 @@ async function doOverwatchCase() {
 
 					data.parsing.startTimestamp = Date.now();
 
-					console.log("Finished unpacking " + caseUpdate.caseid + ", parsing as suspect " + sid.getSteamID64() + "...");
-
+					console.log("Finalizando a extracao " + caseUpdate.caseid + ", Analisando o Suspeito " + sid.getSteamID64() + "...");
+          console.log(" ******************************************************** ");
 					fs.readFile("./demofile.dem", (err, buffer) => {
 						if (err) return console.error(err);
 
@@ -272,7 +290,7 @@ async function doOverwatchCase() {
 							}
 
 							lastProg = prog;
-							console.log("Parsing demo: " + prog + "%");
+							console.log("Analisando: " + prog + "%");
 						});
 
 						demoFile.parse(buffer);
@@ -284,7 +302,7 @@ async function doOverwatchCase() {
 								console.error(err);
 							}
 
-							console.log("Done parsing case " + caseUpdate.caseid);
+							console.log("Caso de Fiscalizacao concluido com sucesso " + caseUpdate.caseid);
 
 							// Setup conviction object
 							let convictionObj = {
@@ -303,7 +321,8 @@ async function doOverwatchCase() {
 								// Wait this long before sending the request, if we parse the demo too fast the GC ignores us
 								let timer = parseInt((config.parsing.minimumTime * 1000) - (data.parsing.endTimestamp - data.parsing.startTimestamp)) / 1000;
 
-								console.log("Waiting " + timer + " second" + (timer === 1 ? "" : "s") + " to avoid the GC ignoring us");
+								console.log("Aguarde " + timer + " segundo " + (timer === 1 ? "" : "") + " para evitar que o sistema do CSGO nos desconecte");
+								
 
 								await new Promise(r => setTimeout(r, (timer * 1000)));
 							}
@@ -342,11 +361,11 @@ async function doOverwatchCase() {
 									// If the bot didn't catch the suspect aimbotting it is most likely just a waller and nothing else
 									convictionObj.rpt_wallhack = 1;
 
-									console.log("Suspect is already banned. Forcefully convicting...");
+									console.log("O suspeito já foi banido de forma efetiva ...");
 
 									data.curcasetempdata.wasAlreadyConvicted = true;
 								} else {
-									console.log("Suspect has not been banned yet according to the Steam API");
+									console.log("O suspeito ainda não foi banido de acordo com a API do Steam");
 
 									data.curcasetempdata.wasAlreadyConvicted = false;
 								}
@@ -372,13 +391,13 @@ async function doOverwatchCase() {
 
 							if (caseUpdate2.caseurl) {
 								// We got a new case despite sending a completion... Should never happen
-								console.log("Unexpected behaviour: Got a new case but sent convcitionObj. Retrying in 30 seconds");
+								console.log("Comportamento inesperado: obteve um novo caso. Tentando novamente em 30 segundos");
 								setTimeout(doOverwatchCase, (30 * 1000));
 								return;
 							}
 
 							if (!caseUpdate2.caseid) {
-								console.log("Unexpected behaviour: Got a cooldown despite sending completion. Retrying in 30 seconds");
+								console.log("Comportamento inesperado: obtive uma recarga apesar do envio ser concluído. Tentando novamente em 30 segundos");
 								setTimeout(doOverwatchCase, (30 * 1000));
 								return;
 							}
@@ -388,25 +407,28 @@ async function doOverwatchCase() {
 							data.curcasetempdata.steamProfile = "https://steamcommunity.com/profiles/"+ sid.getSteamID64() + "/";
 
 							// Print logs
-							console.log("Internal ID: " + data.casesCompleted);
-							console.log("CaseID: " + caseUpdate2.caseid);
-							console.log("Suspect: " + (data.curcasetempdata.sid ? data.curcasetempdata.sid.getSteamID64() : 0));
-							console.log("Infractions:");
+							console.log("ID interno: " + data.casesCompleted);
+							console.log("ID do caso: " + caseUpdate2.caseid);
+							console.log("Suspeito: " + (data.curcasetempdata.sid ? data.curcasetempdata.sid.getSteamID64() : 0));
+              console.log(" ******************************************************** ");
+							console.log("Tipo de Infracao:");
 							console.log("	Aimbot: " + data.curcasetempdata.aimbot_infractions.length);
 							console.log("	Wallhack: " + data.curcasetempdata.Wallhack_infractions.length);
-							console.log("	TeamKills: " + data.curcasetempdata.teamKill_infractions.length);
-							console.log("	TeamDamage: " + data.curcasetempdata.teamDamage_infractions);
-							console.log("	Other: 0");
-							console.log("	Griefing: " + data.curcasetempdata.AFKing_infractions.length);
-							console.log("	Reported: " +(data.curcasetempdata.Reported ? "Yes" : "No"));
-							console.log("	Already convicted: " +(data.curcasetempdata.wasAlreadyConvicted ? "Yes" : "No"));
-							console.log("Timings:");
+							console.log("	Matou amigo: " + data.curcasetempdata.teamKill_infractions.length);
+							console.log("	Fogo amigo: " + data.curcasetempdata.teamDamage_infractions);
+							console.log(" ******************************************************** ");
+							console.log("	Outros: ");
+							console.log("	AFK: " + data.curcasetempdata.AFKing_infractions.length);
+							console.log("	Ja foi Reportado: " +(data.curcasetempdata.Reported ? "Yes" : "No"));
+							console.log("	Já foi condenado: " +(data.curcasetempdata.wasAlreadyConvicted ? "Yes" : "No"));
+							console.log(" ******************************************************** ");
+							console.log("Outros dados:");
 							console.log("	Total: " + parseInt((data.total.endTimestamp - data.total.startTimestamp) / 1000) + "s");
 							console.log("	Download: " + parseInt((data.download.endTimestamp - data.download.startTimestamp) / 1000) + "s");
-							console.log("	Unpacking: " + parseInt((data.unpacking.endTimestamp - data.unpacking.startTimestamp) / 1000) + "s");
-							console.log("	Parsing: " + parseInt((data.parsing.endTimestamp - data.parsing.startTimestamp) / 1000) + "s");
-							console.log("	Throttle: " + caseUpdate2.throttleseconds + "s");
-
+							console.log("	Extraindo: " + parseInt((data.unpacking.endTimestamp - data.unpacking.startTimestamp) / 1000) + "s");
+							console.log("	Análise: " + parseInt((data.parsing.endTimestamp - data.parsing.startTimestamp) / 1000) + "s");
+							console.log("	Velocidade da analise: " + caseUpdate2.throttleseconds + "s");
+              console.log(" ******************************************************** ");
 							if (config.verdict.writeLog) {
 								if (!fs.existsSync("./cases")) {
 									fs.mkdirSync("./cases");
@@ -436,7 +458,7 @@ async function doOverwatchCase() {
 
 							// Check case limit
 							if (config.verdict.maxVerdicts > 0 && data.casesCompleted >= config.verdict.maxVerdicts) {
-								console.log("Finished doing " + config.verdict.maxVerdicts + " case" + (config.verdict.maxVerdicts === 1 ? "" : "s"));
+								console.log("Finalizado " + config.verdict.maxVerdicts + " o caso" + (config.verdict.maxVerdicts === 1 ? "" : "s"));
 								steamUser.logOff();
 								return;
 							}
@@ -451,14 +473,14 @@ async function doOverwatchCase() {
 	} else {
 		if (!caseUpdate.caseid) {
 			// We are still on cooldown
-			console.log("We are still on cooldown... Waiting " + (caseUpdate.throttleseconds + 1) + " seconds");
+			console.log("Ainda estamos na carregando ... Espere por favor " + (caseUpdate.throttleseconds + 1) + " segundos");
 
 			setTimeout(doOverwatchCase, ((caseUpdate.throttleseconds + 1) * 1000));
 			return;
 		}
 
 		// We got a completion but without actually sending a completion... Should never happen
-		console.log("Unexpected behaviour: Got a completion without sending one. Retrying in 30 seconds");
+		console.log("Comportamento inesperado: foi concluído sem enviar um. Tentando novamente em 30 segundos");
 		setTimeout(doOverwatchCase, (30 * 1000));
 	}
 }
